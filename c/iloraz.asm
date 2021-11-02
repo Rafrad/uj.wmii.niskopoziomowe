@@ -1,12 +1,13 @@
 BITS 32
 section .text 
 
-global iloraz        ;KONWENCJA!!! - funkcja suma ma być widziana w innych modułach aplikacji
+extern scanf
+extern printf
+global main       ;KONWENCJA!!! - funkcja suma ma być widziana w innych modułach aplikacji
                    ; pod Windowsem należy dodać podkreślenie przed suma
  
-iloraz:
-enter 0, 0                   ;  tworzymy ramkę stosu na początku funkcji
-                   ; ENTER 0,0 = PUSH EBP / MOV EPB, ESP
+main:
+enter 0, 0        
 
 ; po wykonaniu push ebp i mov ebp, esp:
 ; w [ebp]    znajduje się stary EBP
@@ -15,18 +16,30 @@ enter 0, 0                   ;  tworzymy ramkę stosu na początku funkcji
 ; w [ebp+12] znajduje się drugi parametr
 ; itd.
 
-%idefine    a    [ebp+8]
-%idefine    b    [ebp+12]
+push b
+push a
+push input
+call scanf
+add esp, 4*3
 
-; tu zaczyna się właściwy kod funkcji
-
-mov    eax, a
-mov    edi, b
+mov    eax, [a]
+mov    edi, [b]
 cdq
 idiv    edi
 
+push eax
+push output
+call printf
+add esp, 4*2
 
+xor eax, eax
 ; tu kończy się właściwy kod funkcji
 
-leave                            ;usuwamy ramkę stosu LEAVE = MOV ESP, EBP / POP EBP
+leave              
 ret
+
+section .data
+input: db "%d %d", 0
+output: db "%d", 10, 0
+a: times 4 db 0
+b: times 4 db 0
