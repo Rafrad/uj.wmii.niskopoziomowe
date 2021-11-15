@@ -1,59 +1,30 @@
  %define a qword [ebp+8]
  %define b qword [ebp+16]
  %define c qword [ebp+24]
- %define d dword [ebp+32]
- %define x dword [ebp+36]
- %define solution dword [ebp-8]
+ %define d qword [ebp+32]
+ %define x qword [ebp+40]
+ %define solution qword [ebp-8]
  
  segment .data
-test: db "test", 10, 0
-test_len: equ $-test
-napis: db "dick %d", 10, 0
  segment .text
- extern printf
  global wartosc
  wartosc:
  enter 0, 0
 
  sub esp, 8
- push napis
  push ebx
 
- mov eax, 4
- mov ebx, 1
- mov ecx, test
- mov edx, test_len
- int 80h
-
+ fld x	;stack: a
  fld a
- fmul x
- fld b
- fadd ST1
- fmul x
- fld c
- fadd ST1
- fmul x
+ fmul ST1	;stack: a*x, x
+ fld b		;stack: b, a*x, x
+ faddp ST1      ;stack: b+a*x, x
+ fmul ST1       ;stack: b*x+a*x^2, x
+ fld c		;stack: c, b*x+a*x^2, x
+ faddp ST1      ;stack: c+..., x
+ fmulp ST1	;stack: x*c+x*...
  fld d
- fadd ST1
- 
- fst qword solution
- 
- mov eax, 4
- mov ebx, 1
- mov ecx, test
- mov edx, test_len
- int 80h
- 
- add esp, 16
- call printf
- sub esp, 16
- mov eax, solution
- 
- mov eax, 4
- mov ebx, 1
- mov ecx, test
- mov edx, test_len
- int 80h
+ faddp ST1
 
  quit:
  pop ebx
