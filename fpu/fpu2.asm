@@ -17,20 +17,20 @@
  
  push ebx                 ; KONWENCJA C - musimy zachować oryginalne dane z rejestru EBX
 
- fld a                    ; stack: a, -4
- fld b                    ; stack: c, a, -4
- fmulp st1                ; stack: a*c, -4
- fld c
- fmulp st1
+ fld a                    ; stack: a
+ fld b                    ; stack: b, a
+ fmulp st1                ; stack: a*b
+ fld c                    ; stack: c, a*b
+ fmulp st1                ; stack: a*b*c
  mov ebx, obj
- fstp dword [ebx]
- fld a
- fld b
- fmul st1, st0
- fld c 
- fmul st1, st0
- fld b
- fmulp st1, st0
+ fstp dword [ebx]         
+ fld a                    ; stack: a
+ fld b                    ; stack: b, a
+ fmul st1, st0            ; stack: b, a*b   
+ fld c                    ; stack: c, b, a*b
+ fmul st1, st0            ; stack: c, c*b, a*b
+ fld a                    ; stack: b, c, c*b, a*b
+ fmulp st1, st0           ; stack: a*c, b*c, a*b
  faddp st1
  faddp st1
  fild word [Two]
