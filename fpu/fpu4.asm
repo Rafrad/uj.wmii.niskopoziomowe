@@ -58,6 +58,9 @@
  fadd ST1        ; stack: x_new, int 
  add eax, 8
  loop while
+
+ fstp ST0
+ ffree ST0
  
  quit:
  pop ecx
